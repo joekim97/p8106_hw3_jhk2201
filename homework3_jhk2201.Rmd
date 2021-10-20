@@ -46,22 +46,33 @@ instacart %>%
 ```
 
 ```{r}
-instacart %>% 
-  mutate(order_dow = recode(order_dow, 
-                        '0'="Sunday",
-                        '1'="Monday",
-                        '2'="Tuesday",
-                        '3'="Wednesday", 
-                        '4'="Thursday",
-                        '5'="Friday", 
-                        '6'="Saturday")) %>% 
+instacart %>%
+   mutate(order_dow = recode(order_dow,
+                            '0' = 'Sunday',
+                            '1' = 'Monday',
+                            '2' = "Tuesday",
+                            '3' = "Wednesday",
+                            '4' = "Thursday",
+                            '5' = "Friday",
+                            '6' = "Saturday")) %>%
+  group_by(product_name, order_dow) %>%
   filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
-  groupby(product_name, order_dow) %>%
   summarize(mean_hour_order = mean(order_hour_of_day)) %>%
   pivot_wider(instacart, 
-  names_from = "", 
-  values_from = "mean")
-  
+  names_from = order_dow, 
+  values_from = product_name)
+
+```
+
+```{r}
+data("brfss_smart2010")
+
+behavioral_health = brfss_smart2010 %>%
+    janitor::clean_names() %>%
+    filter(topic == "Overall Health") %>%
+    filter(response %in% c("Excellent", "Very Good", "Good", "Fair", "Poor")) %>%
+    mutate(response = as.factor(response)) %>%
+    mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
 
