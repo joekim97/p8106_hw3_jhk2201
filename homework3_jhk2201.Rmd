@@ -75,4 +75,28 @@ behavioral_health = brfss_smart2010 %>%
     mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
+```{r}
+data("brfss_smart2010")
+
+behavioral_health2002 = behavioral_health %>%
+  filter(year == 2002) %>%
+  group_by(locationabbr) %>%
+  summarize(count = n_distinct(locationdesc)) %>%
+  filter(count >= 7)
+
+behavioral_health2010 = behavioral_health %>%
+  filter(year == 2010) %>%
+  group_by(locationabbr) %>%
+  summarize(count = n_distinct(locationdesc)) %>%
+  filter(count >= 7)
+```
+
+In 2002, there were six states that were observed at 7 or more locations 
+(CT, FL, MA, NC, NJ, PA). In 2021, there were 14 states that fit the above criteria 
+(CA, CO, FL, MA, MD, NC, NE, NJ, NY , OH, PA, SC, TX, WA).
+
+
+
+
+
 
