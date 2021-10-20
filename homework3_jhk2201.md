@@ -41,7 +41,7 @@ instacart %>%
       summarize(amount_product = n()) %>%
       arrange(aisle, desc(amount_product)) %>%
       filter(min_rank(desc(amount_product)) <4) %>%
-      knitr::kable(digits = 1)
+      knitr::kable(digits = 1, caption = "The Top Three Most Popular Items Sold in ")
 ```
 
     ## `summarise()` has grouped output by 'aisle'. You can override using the `.groups` argument.
@@ -57,3 +57,5 @@ instacart %>%
 | packaged vegetables fruits | Organic Baby Spinach                          |            9784 |
 | packaged vegetables fruits | Organic Raspberries                           |            5546 |
 | packaged vegetables fruits | Organic Blueberries                           |            4966 |
+
+The Top Three Most Popular Items Sold in

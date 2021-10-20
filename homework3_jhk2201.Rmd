@@ -15,7 +15,7 @@ data("instacart")
 ### Problem 1 (Description of Instacart Data)
 
 ## How many aisles are there, and which aisles are the most items ordered from? 
-```{r cars}
+```{r}
 
 max(instacart$aisle_id)
 
@@ -24,8 +24,7 @@ instacart1 <- instacart %>%
   summarise(order_amount=n()) %>% 
   arrange(desc(order_amount)) 
 ```
-There are 134 total aisles listed in the dataframe. The aisle with the most items
-ordered from was fresh vegetables which had a count of 150609. 
+There are 134 total aisles listed in the dataframe. The aisle with the most items ordered from was fresh vegetables which had a count of 150609. 
 
 ```{r}
 instacart2 <- filter(instacart1, order_amount>10000) %>% 
@@ -44,7 +43,25 @@ instacart %>%
       arrange(aisle, desc(amount_product)) %>%
       filter(min_rank(desc(amount_product)) <4) %>%
       knitr::kable(digits = 1, caption = "The Top Three Most Popular Items Sold in ")
+```
 
+```{r}
+instacart %>% 
+  mutate(order_dow = recode(order_dow, 
+                        '0'="Sunday",
+                        '1'="Monday",
+                        '2'="Tuesday",
+                        '3'="Wednesday", 
+                        '4'="Thursday",
+                        '5'="Friday", 
+                        '6'="Saturday")) %>% 
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
+  groupby(product_name, order_dow) %>%
+  summarize(mean_hour_order = mean(order_hour_of_day)) %>%
+  pivot_wider(instacart, 
+  names_from = "", 
+  values_from = "mean")
+  
 ```
 
 
