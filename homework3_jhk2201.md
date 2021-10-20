@@ -3,33 +3,57 @@ hw3\_jhk2201
 joseph Kim
 10/18/2021
 
-## R Markdown
+### Problem 1 (Description of Instacart Data)
 
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
+## How many aisles are there, and which aisles are the most items ordered from?
 
 ``` r
-summary(cars)
+max(instacart$aisle_id)
 ```
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+    ## [1] 134
 
-## Including Plots
+``` r
+instacart1 <- instacart %>%
+  group_by(aisle) %>% 
+  summarise(order_amount=n()) %>% 
+  arrange(desc(order_amount)) 
+```
 
-You can also embed plots, for example:
+There are 134 total aisles listed in the dataframe. The aisle with the
+most items ordered from was fresh vegetables which had a count of
+150609.
 
-![](homework3_jhk2201_files/figure-gfm/pressure-1.png)<!-- -->
+``` r
+instacart2 <- filter(instacart1, order_amount>10000) %>% 
+arrange(desc(order_amount)) 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+ggplot(instacart2, aes(x = aisle, y = order_amount)) + geom_bar(stat="Identity") +
+coord_flip() + labs(title = "Number of Items Ordered for Aisle Greater than 10,000")
+```
+
+![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+``` r
+instacart %>%
+      filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>%
+      group_by(aisle, product_name) %>%
+      summarize(amount_product = n()) %>%
+      arrange(aisle, desc(amount_product)) %>%
+      filter(min_rank(desc(amount_product)) <4) %>%
+      knitr::kable(digits = 1)
+```
+
+    ## `summarise()` has grouped output by 'aisle'. You can override using the `.groups` argument.
+
+| aisle                      | product\_name                                 | amount\_product |
+|:---------------------------|:----------------------------------------------|----------------:|
+| baking ingredients         | Light Brown Sugar                             |             499 |
+| baking ingredients         | Pure Baking Soda                              |             387 |
+| baking ingredients         | Cane Sugar                                    |             336 |
+| dog food care              | Snack Sticks Chicken & Rice Recipe Dog Treats |              30 |
+| dog food care              | Organix Chicken & Brown Rice Recipe           |              28 |
+| dog food care              | Small Dog Biscuits                            |              26 |
+| packaged vegetables fruits | Organic Baby Spinach                          |            9784 |
+| packaged vegetables fruits | Organic Raspberries                           |            5546 |
+| packaged vegetables fruits | Organic Blueberries                           |            4966 |

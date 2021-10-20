@@ -6,26 +6,45 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
 library(p8105.datasets)
 data("instacart")
 ```
 
-## R Markdown
+### Problem 1 (Description of Instacart Data)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
+## How many aisles are there, and which aisles are the most items ordered from? 
 ```{r cars}
-summary(cars)
+
+max(instacart$aisle_id)
+
+instacart1 <- instacart %>%
+  group_by(aisle) %>% 
+  summarise(order_amount=n()) %>% 
+  arrange(desc(order_amount)) 
+```
+There are 134 total aisles listed in the dataframe. The aisle with the most items
+ordered from was fresh vegetables which had a count of 150609. 
+
+```{r}
+instacart2 <- filter(instacart1, order_amount>10000) %>% 
+arrange(desc(order_amount)) 
+
+ggplot(instacart2, aes(x = aisle, y = order_amount)) + geom_bar(stat="Identity") +
+coord_flip() + labs(title = "Number of Items Ordered for Aisle Greater than 10,000")
+              
 ```
 
-## Including Plots
+```{r results='asis'}
+instacart %>%
+      filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>%
+      group_by(aisle, product_name) %>%
+      summarize(amount_product = n()) %>%
+      arrange(aisle, desc(amount_product)) %>%
+      filter(min_rank(desc(amount_product)) <4) %>%
+      knitr::kable(digits = 1, caption = "The Top Three Most Popular Items Sold in ")
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
