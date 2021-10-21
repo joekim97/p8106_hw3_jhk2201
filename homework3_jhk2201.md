@@ -20,9 +20,11 @@ instacart1 <- instacart %>%
   arrange(desc(order_amount)) 
 ```
 
-There are 134 total aisles listed in the dataframe. The aisle with the
-most items ordered from was fresh vegetables which had a count of
-150609.
+There are 134 total aisles listed in the dataframe. The aisles with the
+most items ordered from were fresh vegetables, fresh fruits, and
+packaged vegetables/fruits.
+
+------------------------------------------------------------------------
 
 ###### Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
@@ -35,6 +37,12 @@ coord_flip() + labs(title = "Number of Items Ordered for Aisle Greater than 10,0
 ```
 
 ![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+This plot shows the number of items ordered for each aisle that had
+greater than 10,000 items ordered. We see that the vegetables and fruits
+were by far the aisle in which most items were ordered from.
+
+------------------------------------------------------------------------
 
 ###### Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
 
@@ -64,15 +72,36 @@ instacart %>%
 
 The Top Three Most Popular Items Sold in
 
+The table produced shows the top three products from the aisles “baking
+ingredients”, “dog food care”, and “packaged vegetables fruits”. The
+product name and the amount of each product sold is listed.
+
+------------------------------------------------------------------------
+
 ###### Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 
-instacart %&gt;% mutate(order\_dow = recode(order\_dow, ‘0’ = ‘Sunday’,
-‘1’ = ‘Monday’, ‘2’ = “Tuesday”, ‘3’ = “Wednesday”, ‘4’ = “Thursday”,
-‘5’ = “Friday”, ‘6’ = “Saturday”)) %&gt;% group\_by(product\_name,
-order\_dow) %&gt;% filter(product\_name %in% c(“Pink Lady Apples”,
-“Coffee Ice Cream”)) %&gt;% summarize(mean\_hour\_order =
-mean(order\_hour\_of\_day)) %&gt;% pivot\_wider(instacart, names\_from =
-order\_dow, values\_from = product\_name)
+``` r
+mean_hours = instacart %>%
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
+  group_by(product_name, order_dow) %>%
+  summarize(mean_hour_order = mean(order_hour_of_day)) %>%
+  pivot_wider(names_from = order_dow, values_from = mean_hour_order) %>%
+  rename(Sunday = "0", Monday = "1", Tuesday = "2", Wednesday = "3", Thursday = "4", Friday = "5", Saturday = "6") %>% 
+  knitr::kable()
+```
+
+    ## `summarise()` has grouped output by 'product_name'. You can override using the `.groups` argument.
+
+``` r
+mean_hours
+```
+
+| product\_name    |   Sunday |   Monday |  Tuesday | Wednesday | Thursday |   Friday | Saturday |
+|:-----------------|---------:|---------:|---------:|----------:|---------:|---------:|---------:|
+| Coffee Ice Cream | 13.77419 | 14.31579 | 15.38095 |  15.31818 | 15.21739 | 12.26316 | 13.83333 |
+| Pink Lady Apples | 13.44118 | 11.36000 | 11.70213 |  14.25000 | 11.55172 | 12.78431 | 11.93750 |
+
+------------------------------------------------------------------------
 
 ### Problem 2
 
@@ -91,6 +120,35 @@ behavioral_health = brfss_smart2010 %>%
 
     ## Warning: Unknown levels in `f`: Very good
 
+``` r
+behavioral_health
+```
+
+    ## # A tibble: 8,500 × 23
+    ##     year locationabbr locationdesc  class  topic  question  response sample_size
+    ##    <int> <chr>        <chr>         <chr>  <chr>  <chr>     <fct>          <int>
+    ##  1  2010 AL           AL - Jeffers… Healt… Overa… How is y… Excelle…          94
+    ##  2  2010 AL           AL - Jeffers… Healt… Overa… How is y… Good             208
+    ##  3  2010 AL           AL - Jeffers… Healt… Overa… How is y… Fair             107
+    ##  4  2010 AL           AL - Jeffers… Healt… Overa… How is y… Poor              45
+    ##  5  2010 AL           AL - Mobile … Healt… Overa… How is y… Excelle…          91
+    ##  6  2010 AL           AL - Mobile … Healt… Overa… How is y… Good             224
+    ##  7  2010 AL           AL - Mobile … Healt… Overa… How is y… Fair             120
+    ##  8  2010 AL           AL - Mobile … Healt… Overa… How is y… Poor              66
+    ##  9  2010 AL           AL - Tuscalo… Healt… Overa… How is y… Excelle…          58
+    ## 10  2010 AL           AL - Tuscalo… Healt… Overa… How is y… Good             171
+    ## # … with 8,490 more rows, and 15 more variables: data_value <dbl>,
+    ## #   confidence_limit_low <dbl>, confidence_limit_high <dbl>,
+    ## #   display_order <int>, data_value_unit <chr>, data_value_type <chr>,
+    ## #   data_value_footnote_symbol <chr>, data_value_footnote <chr>,
+    ## #   data_source <chr>, class_id <chr>, topic_id <chr>, location_id <chr>,
+    ## #   question_id <chr>, respid <chr>, geo_location <chr>
+
+After data was cleaned, the resulting data frame had 8500 rows and 23
+columns.
+
+------------------------------------------------------------------------
+
 ##### In 2002, which states were observed at 7 or more locations? What about in 2010?
 
 ``` r
@@ -100,19 +158,55 @@ behavioral_health2002 = behavioral_health %>%
   filter(year == 2002) %>%
   group_by(locationabbr) %>%
   summarize(count = n_distinct(locationdesc)) %>%
-  filter(count >= 7)
+  filter(count >= 7) %>%
+  knitr::kable()
 
+behavioral_health2002
+```
+
+| locationabbr | count |
+|:-------------|------:|
+| CT           |     7 |
+| FL           |     7 |
+| MA           |     8 |
+| NC           |     7 |
+| NJ           |     8 |
+| PA           |    10 |
+
+``` r
 behavioral_health2010 = behavioral_health %>%
   filter(year == 2010) %>%
   group_by(locationabbr) %>%
   summarize(count = n_distinct(locationdesc)) %>%
-  filter(count >= 7)
+  filter(count >= 7) %>%
+  knitr::kable()
+
+behavioral_health2010
 ```
+
+| locationabbr | count |
+|:-------------|------:|
+| CA           |    12 |
+| CO           |     7 |
+| FL           |    41 |
+| MA           |     9 |
+| MD           |    12 |
+| NC           |    12 |
+| NE           |    10 |
+| NJ           |    19 |
+| NY           |     9 |
+| OH           |     8 |
+| PA           |     7 |
+| SC           |     7 |
+| TX           |    16 |
+| WA           |    10 |
 
 In 2002, there were six states that were observed at 7 or more locations
 (CT, FL, MA, NC, NJ, PA). In 2021, there were 14 states that fit the
 above criteria (CA, CO, FL, MA, MD, NC, NE, NJ, NY , OH, PA, SC, TX,
 WA).
+
+------------------------------------------------------------------------
 
 ###### Make a “spaghetti” plot of this average value over time within a state.
 
@@ -134,7 +228,13 @@ ggplot(behave_excellent, aes(x = year, y = avg_datavalue, color = locationabbr))
   )
 ```
 
-![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+The resulting spaghetti plot shows the change in average data value over
+time for each state. It appears very chaotic, and the data varies from
+state to state.
+
+------------------------------------------------------------------------
 
 ###### Make a two-panel plot showing, for the years 2006, and 2010, distribution of data\_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
@@ -151,7 +251,13 @@ ggplot(plot_data, aes(x=response, y=data_value)) +
     caption = "Data from brfss") 
 ```
 
-![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+The two paneled bar graphs produced shows the data value counts for
+response types separated by year (2006, 2008). More Good and Excellent
+response types are present in 2008 than in 2006.
+
+------------------------------------------------------------------------
 
 ### Problem 3
 
@@ -186,6 +292,13 @@ accelerometer_df=
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+The accelerometer data after tidying produced 50400 observations with 6
+variables. Those variables include week, day\_id, day, weekend\_weekday,
+minute\_count, and activity\_count. We created the weekend\_weekday was
+created with a case\_when statement.
+
+------------------------------------------------------------------------
 
 ###### Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
@@ -242,6 +355,12 @@ agg.accel_df
 
 Total Activity Per Day of the Week
 
+The trends being aboved based on the table is that total daily activity
+is slower at the beginning of the week (Monday) and increases towards
+the weekend. This is not that consistent as you look through the weeks.
+
+------------------------------------------------------------------------
+
 ###### Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week.
 
 ``` r
@@ -261,4 +380,9 @@ ggplot(plot_data3, aes(x=minute_count, y=activity_count, color = day)) +
 
     ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
 
-![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+Some apparent information from this plot is that there is an observed
+spike in activity during the mid day on Sundays. Additionally, we
+observe another spike on Friday from 7-9 pm, which could be when an
+individual may begin to enjoy their weekend after a week of work.
