@@ -5,7 +5,7 @@ joseph Kim
 
 ### Problem 1 (Description of Instacart Data)
 
-## How many aisles are there, and which aisles are the most items ordered from?
+###### How many aisles are there, and which aisles are the most items ordered from?
 
 ``` r
 max(instacart$aisle_id)
@@ -24,6 +24,8 @@ There are 134 total aisles listed in the dataframe. The aisle with the
 most items ordered from was fresh vegetables which had a count of
 150609.
 
+###### Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
 ``` r
 instacart2 <- filter(instacart1, order_amount>10000) %>% 
 arrange(desc(order_amount)) 
@@ -33,6 +35,8 @@ coord_flip() + labs(title = "Number of Items Ordered for Aisle Greater than 10,0
 ```
 
 ![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+###### Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
 
 ``` r
 instacart %>%
@@ -60,6 +64,8 @@ instacart %>%
 
 The Top Three Most Popular Items Sold in
 
+###### Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
 instacart %&gt;% mutate(order\_dow = recode(order\_dow, ‘0’ = ‘Sunday’,
 ‘1’ = ‘Monday’, ‘2’ = “Tuesday”, ‘3’ = “Wednesday”, ‘4’ = “Thursday”,
 ‘5’ = “Friday”, ‘6’ = “Saturday”)) %&gt;% group\_by(product\_name,
@@ -68,19 +74,24 @@ order\_dow) %&gt;% filter(product\_name %in% c(“Pink Lady Apples”,
 mean(order\_hour\_of\_day)) %&gt;% pivot\_wider(instacart, names\_from =
 order\_dow, values\_from = product\_name)
 
+### Problem 2
 
+##### Data cleaning the BRFSS dataset
 
-    ```r
-    data("brfss_smart2010")
+``` r
+data("brfss_smart2010")
 
-    behavioral_health = brfss_smart2010 %>%
-        janitor::clean_names() %>%
-        filter(topic == "Overall Health") %>%
-        filter(response %in% c("Excellent", "Very Good", "Good", "Fair", "Poor")) %>%
-        mutate(response = as.factor(response)) %>%
-        mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+behavioral_health = brfss_smart2010 %>%
+    janitor::clean_names() %>%
+    filter(topic == "Overall Health") %>%
+    filter(response %in% c("Excellent", "Very Good", "Good", "Fair", "Poor")) %>%
+    mutate(response = as.factor(response)) %>%
+    mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+```
 
     ## Warning: Unknown levels in `f`: Very good
+
+##### In 2002, which states were observed at 7 or more locations? What about in 2010?
 
 ``` r
 data("brfss_smart2010")
@@ -103,6 +114,8 @@ In 2002, there were six states that were observed at 7 or more locations
 above criteria (CA, CO, FL, MA, MD, NC, NE, NJ, NY , OH, PA, SC, TX,
 WA).
 
+###### Make a “spaghetti” plot of this average value over time within a state.
+
 ``` r
 behave_excellent = behavioral_health %>%
   filter(response == "Excellent") %>%
@@ -123,6 +136,8 @@ ggplot(behave_excellent, aes(x = year, y = avg_datavalue, color = locationabbr))
 
 ![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
+###### Make a two-panel plot showing, for the years 2006, and 2010, distribution of data\_value for responses (“Poor” to “Excellent”) among locations in NY State.
+
 ``` r
 plot_data = behavioral_health %>%
   filter(locationabbr == "NY") %>%
@@ -137,6 +152,10 @@ ggplot(plot_data, aes(x=response, y=data_value)) +
 ```
 
 ![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+### Problem 3
+
+###### Load, Clean, and Wrangle Data
 
 ``` r
 accelerometer_df=
@@ -167,6 +186,8 @@ accelerometer_df=
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+###### Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
 ``` r
 agg.accel_df = accelerometer_df %>%
@@ -220,6 +241,8 @@ agg.accel_df
 |    5 | Wednesday |       445366.00 |
 
 Total Activity Per Day of the Week
+
+###### Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week.
 
 ``` r
 plot_data3 = accelerometer_df %>%

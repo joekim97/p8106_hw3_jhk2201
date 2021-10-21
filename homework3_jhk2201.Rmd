@@ -14,7 +14,8 @@ data("instacart")
 
 ### Problem 1 (Description of Instacart Data)
 
-## How many aisles are there, and which aisles are the most items ordered from? 
+###### How many aisles are there, and which aisles are the most items ordered from?
+
 ```{r}
 
 max(instacart$aisle_id)
@@ -24,7 +25,10 @@ instacart1 <- instacart %>%
   summarise(order_amount=n()) %>% 
   arrange(desc(order_amount)) 
 ```
+
 There are 134 total aisles listed in the dataframe. The aisle with the most items ordered from was fresh vegetables which had a count of 150609. 
+ 
+###### Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
 ```{r}
 instacart2 <- filter(instacart1, order_amount>10000) %>% 
@@ -35,6 +39,8 @@ coord_flip() + labs(title = "Number of Items Ordered for Aisle Greater than 10,0
               
 ```
 
+###### Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
+
 ```{r results='asis'}
 instacart %>%
       filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>%
@@ -44,6 +50,8 @@ instacart %>%
       filter(min_rank(desc(amount_product)) <4) %>%
       knitr::kable(digits = 1, caption = "The Top Three Most Popular Items Sold in ")
 ```
+
+###### Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 
 instacart %>%
    mutate(order_dow = recode(order_dow,
@@ -61,7 +69,9 @@ instacart %>%
   names_from = order_dow, 
   values_from = product_name)
 
-```
+### Problem 2 
+
+##### Data cleaning the BRFSS dataset
 
 ```{r}
 data("brfss_smart2010")
@@ -73,6 +83,8 @@ behavioral_health = brfss_smart2010 %>%
     mutate(response = as.factor(response)) %>%
     mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
+
+##### In 2002, which states were observed at 7 or more locations? What about in 2010?
 
 ```{r}
 data("brfss_smart2010")
@@ -94,6 +106,8 @@ In 2002, there were six states that were observed at 7 or more locations
 (CT, FL, MA, NC, NJ, PA). In 2021, there were 14 states that fit the above criteria 
 (CA, CO, FL, MA, MD, NC, NE, NJ, NY , OH, PA, SC, TX, WA).
 
+###### Make a “spaghetti” plot of this average value over time within a state.
+
 ```{r}
 behave_excellent = behavioral_health %>%
   filter(response == "Excellent") %>%
@@ -108,7 +122,7 @@ ggplot(behave_excellent, aes(x = year, y = avg_datavalue, color = locationabbr))
   )
 ```
 
-
+###### Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
 ```{r}
 plot_data = behavioral_health %>%
@@ -123,6 +137,9 @@ ggplot(plot_data, aes(x=response, y=data_value)) +
     caption = "Data from brfss") 
 ```
 
+### Problem 3 
+
+###### Load, Clean, and Wrangle Data
 
 ```{r}
 accelerometer_df=
@@ -141,8 +158,9 @@ accelerometer_df=
            day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday") ~ "Weekday",
            day %in% c("Saturday", "Sunday") ~ "Weekend")) %>%
       relocate(weekend_weekday,.after = day)
-  
 ```
+
+###### Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
 ```{r}
 
@@ -153,6 +171,8 @@ agg.accel_df = accelerometer_df %>%
 
 agg.accel_df
 ```
+
+###### Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
 
 ```{r}
 
