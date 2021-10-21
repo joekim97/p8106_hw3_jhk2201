@@ -45,7 +45,6 @@ instacart %>%
       knitr::kable(digits = 1, caption = "The Top Three Most Popular Items Sold in ")
 ```
 
-```{r}
 instacart %>%
    mutate(order_dow = recode(order_dow,
                             '0' = 'Sunday',
@@ -95,8 +94,65 @@ In 2002, there were six states that were observed at 7 or more locations
 (CT, FL, MA, NC, NJ, PA). In 2021, there were 14 states that fit the above criteria 
 (CA, CO, FL, MA, MD, NC, NE, NJ, NY , OH, PA, SC, TX, WA).
 
+```{r}
+behave_excellent = behavioral_health %>%
+  filter(response == "Excellent") %>%
+  group_by(year, locationabbr) %>%
+  summarize(avg_datavalue = mean(data_value, na.rm = TRUE)) 
+
+ggplot(behave_excellent, aes(x = year, y = avg_datavalue, color = locationabbr)) + geom_line(aes(group = locationabbr), alpha =0.5) + labs(
+    title = "Avergae Data Value Over Time By State",
+    x = "Year",
+    y = "Average Data Value",
+    caption = "Data from brfss"
+  )
+```
 
 
+
+```{r}
+plot_data = behavioral_health %>%
+  filter(locationabbr == "NY") %>%
+  filter(year %in% c("2006", "2008"))
+  
+ggplot(plot_data, aes(x=response, y=data_value)) + 
+  geom_col() + facet_grid(~year) + labs(
+    title = "Data_Value Counts for Response Types, By Year",
+    x = "Response Types",
+    y = "Data Values (%)",
+    caption = "Data from brfss")
+```
+
+
+```{r}
+accelerometer_df=
+  read_csv("/Users/josephkim/Desktop/p8106_hw3_jhk2201/accel_data.csv") %>%
+  janitor::clean_names() %>%
+    pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute_count", 
+    values_to = "activity_count",
+    names_prefix = "activity_") %>%
+    mutate(
+      week = as.integer(week), 
+      day_id = as.integer(day_id), 
+      minute_count = as.integer(minute_count), 
+      weekend_weekday = case_when(
+           day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday") ~ "Weekday",
+           day %in% c("Saturday", "Sunday") ~ "Weekend")) %>%
+      relocate(weekend_weekday,.after = day)
+  
+```
+
+```{r}
+
+agg.accel_df = accelerometer_df %>%
+  group_by(week, day) %>%
+  summarize(total_activity = sum(activity_count)) %>%
+  knitr::kable(caption = "Total Activity Per Day of the Week")
+
+agg.accel_df
+```
 
 
 
