@@ -133,7 +133,7 @@ ggplot(plot_data, aes(x=response, y=data_value)) +
     title = "Data_Value Counts for Response Types, By Year",
     x = "Response Types",
     y = "Data Values (%)",
-    caption = "Data from brfss")
+    caption = "Data from brfss") 
 ```
 
 ![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
@@ -220,3 +220,22 @@ agg.accel_df
 |    5 | Wednesday |       445366.00 |
 
 Total Activity Per Day of the Week
+
+``` r
+plot_data3 = accelerometer_df %>%
+  group_by(day, minute_count)
+  
+ggplot(plot_data3, aes(x=minute_count, y=activity_count, color = day)) +
+  geom_smooth(se = FALSE) + 
+  labs(
+   title = "Tracking Activity Over 24 Hours by Day",
+    x = "Minutes during the day",
+    y = "Total Activity Count") +
+  scale_x_continuous(
+    breaks = c(0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440), 
+    labels = c("12 AM", "2 AM", "4 AM", "6 AM", "8 AM", "10 AM", "12 PM", "2 PM", "4 PM", "6 PM", "8 PM", "10 PM", "12 AM"))
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
+
+![](homework3_jhk2201_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
